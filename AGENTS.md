@@ -1,3 +1,47 @@
+# Dungeon Master — инструкции для агентов
+
+Цель форка Open Game Master: живой интерактивный D&D-мастер на русском.
+Исходный движок уже существует; развиваем его небольшими проверяемыми изменениями.
+Обсуждения и новая документация — на русском; имена API, схем и игровых ID сохраняем.
+
+## Выбирай контекст по задаче
+
+Не читай всю документацию на старте. Открой нужную строку таблицы и соответствующий код.
+Перед изменением каталога найди и прочитай вложенные `AGENTS.md` по его пути:
+не каждый клиент автоматически загружает их при работе из корня.
+
+| Задача | Точка входа |
+| --- | --- |
+| Найти код, границы подсистем | [Карта архитектуры](docs/fork/architecture.md) |
+| Уточнить цель, выбрать следующую задачу | [Продукт](docs/fork/product.md), [план](docs/fork/roadmap.md) |
+| Запуск, проверки, передача работы | [Разработка](docs/fork/development.md) |
+| Обновить форк из оригинала | [Upstream](docs/fork/upstream.md) |
+| Поменять организацию проекта | [Решение 0001](docs/fork/decisions/0001-repository-structure.md) |
+
+## Инварианты
+
+- Сервер владеет бросками, HP, ресурсами и правами доступа; LLM предлагает действия через проверяемые tools.
+- Русский текст — слой представления. Не переводи ключи JSON, tool names и канонические идентификаторы.
+- Сохраняй совместимость кампаний и миграций, границу server/client и изоляцию секретов мастера от игроков.
+- Сохраняй структуру upstream; переноси модули только для конкретной задачи с проверкой импортов.
+- Не коммить ключи, `.env` с секретами, базы кампаний, логи диалогов и скачанные модели.
+- Новое поведение сопровождай подходящей проверкой; фиксируй реальные результаты и непроверенные части.
+
+## Команды
+
+- Документация и навигация без установки пакетов: `node scripts/check-agent-context.mjs` и `git diff --check`.
+- Зависимости: `npm ci`; на PowerShell при ограничениях execution policy используй `npm.cmd`.
+- Точечный тест: `npm test -- scripts/test-language.mjs` (подставь файл своей подсистемы).
+- Изменения приложения: `npm run lint`, `npx tsc --noEmit`, подходящие тесты; сборка при изменении интеграции.
+- Условия полного набора тестов и запуска: [development.md](docs/fork/development.md).
+
+## Унаследованные правила по области
+
+- Новый UI control: [правила интерфейса](docs/fork/ui-controls.md).
+- Арт токенов: [читаемость](docs/art/token-readability.md); существа и image prompts: [источники и анатомия](docs/art/creature-art-guidance.md).
+- `src/lib/addons/`, addon routes, board bridge: [framework](docs/addons/framework.md); после изменения manifest schema — `node scripts/build-addon-schema.mjs`.
+- Релизы: [releases](docs/releases.md) и [особенности форка](docs/fork/upstream.md); публикация и promotion — только в рамках запроса владельца.
+
 <!-- BEGIN:nextjs-agent-rules -->
 
 ## This is NOT the Next.js you know
@@ -7,83 +51,3 @@ This version has breaking changes — APIs, conventions, and file structure may 
 This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
 
 <!-- END:nextjs-agent-rules -->
-
-## Token artwork
-
-Before creating or replacing monster, NPC or character artwork, read
-[docs/art/token-readability.md](docs/art/token-readability.md). These images also
-appear as small round tokens: review the shipped asset at 96px and 40px, preserve
-existing paths for repaints, and reuse approved art that already reads well.
-
-## Creature artwork and content sources
-
-Before creating or replacing creature art, adding bestiary content, or changing
-image prompts, read [docs/art/creature-art-guidance.md](docs/art/creature-art-guidance.md).
-Use a named SRD creature, an original design, or a separately licensed subject
-with recorded permission. Do not let a generic prompt such as "aberration"
-introduce a beholder or mind flayer. Inspect the rendered anatomy as well as the
-prompt, and preserve the source and edit history with each art change.
-
-## Addon framework
-
-Before changing anything under `src/lib/addons/`, the addon routes, or the
-board view bridge, read [docs/addons/framework.md](docs/addons/framework.md):
-the code map, the rules every change keeps (addons propose and the server
-disposes, no secrets in an addon's environment, sandboxed board views), and
-the steps for a new manifest field, bridge message or extension point.
-Regenerate `docs/addons/addon.schema.json` with
-`node scripts/build-addon-schema.mjs` whenever the manifest schema changes.
-
-## Settings, options and toggles
-
-Every control is paid for by everyone who meets it: a setting by every
-player who sets up a campaign, a field by every author who fills the form.
-Add one when the feature needs it, and earn its place first. Before adding a
-setting, option, toggle, picker, button or field anywhere (the campaign
-creator, a campaign's panels, the sheet, the admin console, the workshop),
-and when reviewing an issue or pull request that asks for one:
-
-1. Ship a good default first. If one default serves most tables, the feature
-   needs no setting. A default that is only "off" or "same as before" means
-   the feature is not finished.
-2. Keep it out of the campaign creator unless it must be decided before the
-   first scene and has no safe default (today: the setting, who runs the
-   story, the players, safety). Everything else starts from its default and
-   is changed later in the campaign's own settings.
-3. One control per idea. A preset picker beats several toggles; "Custom"
-   opens the detailed fields.
-4. Show a control only when it can matter: no art style while pictures are
-   off.
-5. Someone who always customizes the same way saves it once as their
-   personal defaults (`src/app/create-campaign/defaults.ts`); that is not a
-   reason for another toggle.
-6. Stop and justify it before building. Write down what goes wrong without
-   the control, why a good default or a control that already exists cannot
-   cover it, and who will use it. If that holds, build it; if it does not,
-   the feature needs no control. The pull request carries the justification
-   and a screenshot of the control where it lives, with its default (the
-   feature request and pull request templates ask for these).
-7. Make it accessible and easy to understand:
-   - a visible label in plain words that says what it does, and a short
-     hint or an ⓘ glossary where the choice or its terms are not obvious;
-   - named for screen readers (a real label, `aria-label` on an icon-only
-     button, a group or dialog role for a question it asks), reachable and
-     usable by keyboard with a visible focus ring, never only on hover;
-   - a finger-sized target on phones (at least 40px, the size of the kit's
-     own controls), readable at phone width, and legible in the day and
-     night themes;
-   - moving and placed like the controls around it, so it looks like it
-     belongs there;
-   - checked on the website and in the app shells (`--app` in the browser
-     harness), with axe where a page has a scenario for it
-     (`32-builder-a11y`).
-
-## Releases
-
-Before cutting, promoting or fixing a release of the server or the apps, read
-[docs/releases.md](docs/releases.md). Versions are plain `x.y.z`; whether a
-release is a beta or stable is only its GitHub prerelease flag. Once betas
-have started (the client repository's `PUBLISH_AS_BETA` variable is `true`),
-publish every server release with `--prerelease`, never `--latest`, and make
-a release stable only by promoting a beta that meets the doc's checks. Never
-promote a release, or set that variable, unless the maintainer asks for it.

@@ -1,3 +1,21 @@
+<!-- BEGIN: russian-fork -->
+# Dungeon Master — русский ИИ-мастер D&D
+
+Форк [Open Game Master](https://github.com/Lebbitheplow/open-game-master).
+Цель — живой интерактивный мастер, который ведёт игру на русском, помнит кампанию
+и опирается на серверный движок правил.
+
+**Разработчикам и ИИ-агентам:** начните с [AGENTS.md](AGENTS.md).
+[Документация форка](docs/fork/README.md) · [Карта кода](docs/fork/architecture.md) ·
+[План работ](docs/fork/roadmap.md) · [Запуск и проверки](docs/fork/development.md).
+
+Сейчас подготовлена структура разработки; полноценная русификация ещё впереди.
+Ниже сохранены описание и инструкции оригинального проекта; его ссылки на релизы
+и приложения относятся к upstream. Происхождение: [upstream.md](docs/fork/upstream.md).
+<!-- END: russian-fork -->
+
+---
+
 <div align="center">
 
 <img src="docs/banner.png" alt="Open Game Master" width="100%">
