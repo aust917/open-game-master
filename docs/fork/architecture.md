@@ -14,6 +14,7 @@ Next.js App Router + React + TypeScript; серверные маршруты и 
 | --- | --- | --- |
 | Страница и компоновка игрового стола | `src/app/campaigns/[campaignId]/table/page.tsx`, `TableLayout.tsx` в каталоге кампании | `src/app/campaigns/[campaignId]/useCampaignStream.ts`, `src/components/ui/` |
 | Создание кампании и настройки | `src/app/create-campaign/`, `src/lib/schemas/game-settings.ts` | `src/lib/schemas/game-settings-options.ts`, `src/lib/db/campaigns.ts` |
+| Вход со смартфона по QR в общей Wi-Fi-сети | `src/components/ServerAddressButton.tsx`, `src/lib/server-address.ts` | `src/lib/share-link.ts` — отдельный путь приглашения в кампанию; `src/lib/secure-context.ts` — проверка условий доступа к микрофону |
 | Действие игрока | `src/app/api/campaigns/[campaignId]/actions/route.ts` | `src/lib/dm/intent-logic.ts`, `src/lib/dm/loop.ts` |
 | Ход ИИ-мастера, остановка и продолжение | `src/lib/dm/turn.ts`, `src/lib/dm/queue.ts` | `src/lib/db/dm-turns.ts`, `src/lib/dm/job-control.ts` |
 | Промпт, выбор памяти и бюджет | `src/lib/dm/prompt.ts`, `src/lib/dm/context-retrieval.ts` | `src/lib/dm/context-budget.ts`, `src/lib/dm/request-fit.ts`, `src/lib/dm/tool-profiles.ts` |
